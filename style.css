@@ -195,3 +195,14 @@ body {
   0% { filter: drop-shadow(0 0 40px white); }
   100% { filter: drop-shadow(0 0 0px white); }
 }
+
+.message {
+  position: absolute;
+  top: 70vh;              /* starting lower */
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  animation: travelUpDown 5s ease-in-out infinite alternate;
+   will-change: top;
+}
