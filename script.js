@@ -102,8 +102,14 @@ if (finalDuck) {
         bgMusic.play().catch(() => {});
       }
 
-      document.getElementById("page0").classList.remove("active");
-      document.getElementById("page1").classList.add("active");
+      const page0 = document.getElementById("page0");
+const page1 = document.getElementById("page1");
+
+page0.classList.remove("active");
+
+setTimeout(() => {
+  page1.classList.add("active");
+}, 1000);  // slight delay allows smoother crossfade
 
       currentPage = 1;
     });
