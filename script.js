@@ -311,15 +311,17 @@ function checkWin() {
       winSound.currentTime = 0;
 
       const handleEnd = () => {
-        winSound.removeEventListener("ended", handleEnd);
+  winSound.removeEventListener("ended", handleEnd);
 
-        if (bgMusic) {
-          fadeAudio(bgMusic, 0.05, 800); // restore volume smoothly
-        }
+  if (bgMusic) {
+    fadeAudio(bgMusic, 1.0, 800); // restore volume
+  }
 
-        overlay.classList.remove("active");
-        goToPage(3);
-      };
+  setTimeout(() => {
+    overlay.classList.remove("active");
+    goToPage(3);
+  }, 800);  // wait for fade up to finish
+};
 
       winSound.addEventListener("ended", handleEnd);
       winSound.play().catch(() => {});
@@ -457,3 +459,16 @@ function fadeAudio(audio, targetVolume, duration = 500) {
     }
   }, stepTime);
 }
+
+document.addEventListener("visibilitychange", function () {
+
+  const bgMusic = document.getElementById("bgMusic");
+  if (!bgMusic) return;
+
+  if (document.hidden) {
+    bgMusic.pause();
+  } else {
+    bgMusic.play().catch(() => {});
+  }
+
+});
