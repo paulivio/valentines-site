@@ -29,27 +29,39 @@
       <h1 class="moving-text1">From me and the gang this valentines  ❤️</h1>
   </section>
 
-  <!-- PAGE 2 -->
-  <section id="page2" class="page">
-    <img src="assets/image2.jpg" class="main-image">
- <img src="assets/duck.png" class="duck-button" onclick="goToPage(3)">
-  </section>
+  <!-- PAGE 2 - DUCK CATCH GAME -->
+<section id="page2" class="page game-page">
+
+  <div class="scoreboard">
+    Score: <span id="score">0</span>
+  </div>
+
+  <div id="gameArea">
+    <div id="catcher"></div>
+  </div>
+</section>
 
   <!-- PAGE 3 -->
   <section id="page3" class="page">
+    <img src="assets/image2.jpg" class="main-image">
+ <img src="assets/duck.png" class="duck-button" onclick="goToPage(4)">
+  </section>
+
+  <!-- PAGE 4 -->
+  <section id="page4" class="page">
     <canvas id="fireworks"></canvas>
     <img src="assets/image3.jpg" class="final-image">
     <h1 class="messagefinal">Happy Valentine’s Day ❤️</h1>
 <img src="assets/duck.png" class="duck-button final-duck" id="finalDuck">
 
-    <div class="secret-trigger" onclick="goToPage(4)"></div>
+    <div class="secret-trigger" onclick="goToPage(5)"></div>
   </section>
 
-<!-- PAGE 4 (SECRET PAGE) -->
-<section id="page4" class="page secret-page">
+<!-- PAGE 5 (SECRET PAGE) -->
+<section id="page5" class="page secret-page">
   <img src="assets/image4.jpg" class="final-image">
   <h1 class="message">You found the secret 🦆❤️</h1>
-  <img src="assets/duck.png" class="duck-button" onclick="goToPage(3)">
+  <img src="assets/duck.png" class="duck-button" onclick="goToPage(4)">
 </section>
 
   <script src="script.js"></script>

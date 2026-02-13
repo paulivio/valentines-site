@@ -1,12 +1,19 @@
 let currentPage = 0;
 let fireworksStarted = false;
 
+
+
 /* -------------------------
    PAGE SWITCHING
 ------------------------- */
 let holdTimer = null;
 let holdTriggered = false;
 let isHolding = false;
+
+// GAME VARIABLES
+let score = 0;
+let gameRunning = false;
+const targetScore = 5;
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -40,7 +47,7 @@ if (finalDuck) {
         finalDuck.classList.add("unlocked");
 
         setTimeout(() => {
-          goToPage(4);
+          goToPage(5);
         }, 200);
       }
     }, 1000);
@@ -150,13 +157,101 @@ function switchPage(pageNumber) {
 
   currentPage = pageNumber;
 
-  if (pageNumber === 3 && !fireworksStarted) {
+  if (pageNumber === 2) {
+  startGame();
+
+  if (pageNumber === 4 && !fireworksStarted) {
     startFireworks();
     fireworksStarted = true;
   }
+
+
+}
 }
 
+function startGame() {
 
+  score = 0;
+  document.getElementById("score").textContent = score;
+  gameRunning = true;
+
+  const gameArea = document.getElementById("gameArea");
+  const catcher = document.getElementById("catcher");
+
+  let catcherX = window.innerWidth / 2;
+
+  document.addEventListener("mousemove", (e) => {
+    if (!gameRunning) return;
+    catcherX = e.clientX;
+    catcher.style.left = catcherX - 60 + "px";
+  });
+
+  document.addEventListener("touchmove", (e) => {
+    if (!gameRunning) return;
+    catcherX = e.touches[0].clientX;
+    catcher.style.left = catcherX - 60 + "px";
+  });
+
+  function spawnDuck() {
+
+    if (!gameRunning) return;
+
+    const duck = document.createElement("img");
+    duck.src = "assets/duck.png";
+    duck.classList.add("duck-falling");
+
+    duck.style.left = Math.random() * (window.innerWidth - 60) + "px";
+    duck.style.top = "0px";
+
+    gameArea.appendChild(duck);
+
+    let fallInterval = setInterval(() => {
+
+      let top = parseFloat(duck.style.top);
+      duck.style.top = top + 5 + "px";
+
+      const duckRect = duck.getBoundingClientRect();
+      const catcherRect = catcher.getBoundingClientRect();
+
+      if (
+        duckRect.bottom >= catcherRect.top &&
+        duckRect.left < catcherRect.right &&
+        duckRect.right > catcherRect.left
+      ) {
+        score++;
+        document.getElementById("score").textContent = score;
+        duck.remove();
+        clearInterval(fallInterval);
+        checkWin();
+      }
+
+      if (duckRect.top > window.innerHeight) {
+        score = Math.max(0, score - 1);
+        document.getElementById("score").textContent = score;
+        duck.remove();
+        clearInterval(fallInterval);
+      }
+
+    }, 20);
+  }
+
+  const spawnLoop = setInterval(() => {
+    if (!gameRunning) {
+      clearInterval(spawnLoop);
+      return;
+    }
+    spawnDuck();
+  }, 1200);
+
+  function checkWin() {
+    if (score >= targetScore) {
+      gameRunning = false;
+      setTimeout(() => {
+        goToPage(3);
+      }, 800);
+    }
+  }
+}
 
 
 /* -------------------------
