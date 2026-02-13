@@ -33,7 +33,7 @@ skipButton.addEventListener("click", function () {
     gameHasBeenPlayed = true;   // 👈 mark as played
     stopGame();
   setTimeout(() => {
-    goToPage(3);
+    goToPage(3, false);
   }, 300);
 });
 
@@ -129,7 +129,9 @@ function resetDuckState() {
   finalDuck.classList.remove("unlocked");
 }
 
-function goToPage(pageNumber) {
+function goToPage(pageNumber, playSound = true) {
+
+  console.log("Play sound flag:", playSound);
 
   console.log("Switching to page:", pageNumber);
 
@@ -140,7 +142,7 @@ function goToPage(pageNumber) {
     bgMusic.play().catch(() => {});
   }
 
-  if (clickSound) {
+if (clickSound && playSound)  {
 
     clickSound.currentTime = 0;
 
@@ -163,19 +165,12 @@ function goToPage(pageNumber) {
 
 function switchPage(pageNumber) {
 
-  if (pageNumber === 4) {
-  console.log("Triggering fireworks");
-  startFireworks();
-}
+  console.log("Switched to:", pageNumber);
 
-  // Reset duck state whenever leaving page 3
   resetDuckState();
-console.log("Switched to:", pageNumber);
-  const pages = document.querySelectorAll(".page");
 
-  pages.forEach(page => {
-    page.classList.remove("active");
-  });
+  const pages = document.querySelectorAll(".page");
+  pages.forEach(page => page.classList.remove("active"));
 
   const next = document.getElementById("page" + pageNumber);
   next.classList.add("active");
@@ -183,16 +178,15 @@ console.log("Switched to:", pageNumber);
   currentPage = pageNumber;
 
   if (pageNumber === 2) {
-  startGame();
+    startGame();
+  }
 
-   if (pageNumber === 4) {
-  console.log("Triggering fireworks");
-  startFireworks();
+  if (pageNumber === 4) {
+    console.log("Triggering fireworks");
+    startFireworks();
+  }
 }
 
-
-}
-}
 
 function startGame() {
 
@@ -325,7 +319,7 @@ function checkWin() {
 
   setTimeout(() => {
     overlay.classList.remove("active");
-    goToPage(3);
+    goToPage(3, false);
   }, 800);  // wait for fade up to finish
 };
 
@@ -335,7 +329,7 @@ function checkWin() {
     } else {
       setTimeout(() => {
         overlay.classList.remove("active");
-        goToPage(3);
+        goToPage(3, false);
       }, 3000);
     }
   }
