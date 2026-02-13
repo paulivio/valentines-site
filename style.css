@@ -1,0 +1,197 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: black;
+}
+
+.main-image,
+.final-image {
+   width: 100%;
+  height: 100vh;
+  object-fit: contain;
+  background: black; /* fills empty space nicely */
+}
+
+
+.duck-button {
+  position: absolute;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(70px, 20vw, 120px);
+  cursor: pointer;
+}
+
+.duck-button:hover {
+  transform: translateX(-50%) scale(1.1);
+}
+
+@keyframes float {
+  0% { transform: translateX(-50%) translateY(0px); }
+  50% { transform: translateX(-50%) translateY(-10px); }
+  100% { transform: translateX(-50%) translateY(0px); }
+}
+
+#fireworks {
+     pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.messagefinal {
+  position: absolute;
+  top: 70vh;              /* starting lower */
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  animation: travelUpDown 5s ease-in-out infinite alternate;
+   will-change: top;
+}
+
+body {
+  transition: opacity 0.5s ease;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
+.moving-text1 {
+  position: absolute;
+  top: 20px;
+  white-space: nowrap;
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px hotpink;
+  animation: marquee 6s ease-in-out infinite alternate;
+}
+
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw - 100%)); }
+
+
+}
+
+
+@keyframes travelUpDown {
+  from {
+    top: 70vh;   /* near bottom */
+  }
+  to {
+    top: 10vh;   /* equal spacing from top */
+  }
+}
+
+.page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease;
+
+  z-index: 0;
+}
+
+.page.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
+}
+
+.page.active.intro-page {
+  display: flex;
+}
+
+.intro-page {
+  background: black;
+  justify-content: center;
+  align-items: center;
+}
+
+.intro-content {
+  text-align: center;
+}
+
+
+.page.active.intro-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.intro-duck {
+  width: clamp(100px, 25vw, 180px);
+  cursor: pointer;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.intro-text {
+  color: white;
+  margin-top: 20px;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  text-shadow: 0 0 15px hotpink;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.intro-duck {
+  width: clamp(120px, 25vw, 200px);
+  cursor: pointer;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.secret-trigger {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+/* Charging glow effect */
+.final-duck.charging {
+  animation: chargeGlow 1s linear forwards;
+}
+
+@keyframes chargeGlow {
+  0% {
+    filter: drop-shadow(0 0 5px hotpink);
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 15px deeppink);
+    transform: translateX(-50%) scale(1.08);
+  }
+  100% {
+    filter: drop-shadow(0 0 30px red);
+    transform: translateX(-50%) scale(1.15);
+  }
+}
+
+/* Flash when unlocked */
+.final-duck.unlocked {
+  animation: unlockFlash 0.3s ease;
+}
+
+@keyframes unlockFlash {
+  0% { filter: drop-shadow(0 0 40px white); }
+  100% { filter: drop-shadow(0 0 0px white); }
+}
