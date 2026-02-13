@@ -15,6 +15,10 @@ let score = 0;
 let gameRunning = false;
 const targetScore = 10;
 let gameHasBeenPlayed = false;
+
+let spawnLoop = null;
+let activeDuckIntervals = [];
+
 document.addEventListener("DOMContentLoaded", function () {
 
   const startButton = document.getElementById("startButton");
@@ -27,6 +31,7 @@ const skipButton = document.getElementById("skipGame");
 skipButton.addEventListener("click", function () {
   gameRunning = false;
     gameHasBeenPlayed = true;   // 👈 mark as played
+    stopGame();
   setTimeout(() => {
     goToPage(3);
   }, 300);
@@ -152,9 +157,14 @@ function goToPage(pageNumber) {
 
 function switchPage(pageNumber) {
 
+  if (pageNumber === 4) {
+  console.log("Triggering fireworks");
+  startFireworks();
+}
+
   // Reset duck state whenever leaving page 3
   resetDuckState();
-
+console.log("Switched to:", pageNumber);
   const pages = document.querySelectorAll(".page");
 
   pages.forEach(page => {
@@ -169,10 +179,10 @@ function switchPage(pageNumber) {
   if (pageNumber === 2) {
   startGame();
 
-  if (pageNumber === 4 && !fireworksStarted) {
-    startFireworks();
-    fireworksStarted = true;
-  }
+   if (pageNumber === 4) {
+  console.log("Triggering fireworks");
+  startFireworks();
+}
 
 
 }
@@ -181,6 +191,9 @@ function switchPage(pageNumber) {
 function startGame() {
 
   const skipButton = document.getElementById("skipGame");
+
+  const overlay = document.getElementById("winOverlay");
+if (overlay) overlay.classList.remove("active");
 
 if (skipButton) {
   if (gameHasBeenPlayed) {
@@ -224,6 +237,7 @@ if (skipButton) {
   gameArea.appendChild(duck);
 
   let fallInterval = setInterval(() => {
+    activeDuckIntervals.push(fallInterval);
 
     let top = parseFloat(duck.style.top);
     const speed = 5 + score * 0.5;
@@ -268,7 +282,7 @@ if (skipButton) {
   }, 20);
 }
 
-  const spawnLoop = setInterval(() => {
+ spawnLoop = setInterval(() => {
     if (!gameRunning) {
       clearInterval(spawnLoop);
       return;
@@ -278,14 +292,64 @@ if (skipButton) {
 
 function checkWin() {
   if (score >= targetScore) {
-    gameRunning = false;
-    gameHasBeenPlayed = true;   // 👈 mark complete
 
-    setTimeout(() => {
-      goToPage(3);
-    }, 800);
+    stopGame();
+    gameHasBeenPlayed = true;
+
+    const overlay = document.getElementById("winOverlay");
+    overlay.classList.add("active");
+
+    const winSound = document.getElementById("winSound");
+    const bgMusic = document.getElementById("bgMusic");
+
+    if (bgMusic) {
+      fadeAudio(bgMusic, 0.15, 600); // 🔥 reduce further
+    }
+
+    if (winSound) {
+  winSound.volume = 1.0;
+      winSound.currentTime = 0;
+
+      const handleEnd = () => {
+        winSound.removeEventListener("ended", handleEnd);
+
+        if (bgMusic) {
+          fadeAudio(bgMusic, 0.05, 800); // restore volume smoothly
+        }
+
+        overlay.classList.remove("active");
+        goToPage(3);
+      };
+
+      winSound.addEventListener("ended", handleEnd);
+      winSound.play().catch(() => {});
+
+    } else {
+      setTimeout(() => {
+        overlay.classList.remove("active");
+        goToPage(3);
+      }, 3000);
+    }
   }
 }
+}
+
+function stopGame() {
+
+  gameRunning = false;
+
+  // Stop spawning ducks
+  if (spawnLoop) {
+    clearInterval(spawnLoop);
+    spawnLoop = null;
+  }
+
+  // Stop all falling ducks
+  activeDuckIntervals.forEach(interval => clearInterval(interval));
+  activeDuckIntervals = [];
+
+  // Remove all duck elements
+  document.querySelectorAll(".duck-falling").forEach(duck => duck.remove());
 }
 
 function showFloatingPoint(x, y) {
@@ -372,4 +436,24 @@ function startFireworks() {
   }
 
   update();
+}
+
+function fadeAudio(audio, targetVolume, duration = 500) {
+  if (!audio) return;
+
+  const startVolume = audio.volume;
+  const volumeDiff = targetVolume - startVolume;
+  const steps = 20;
+  const stepTime = duration / steps;
+  let currentStep = 0;
+
+  const fade = setInterval(() => {
+    currentStep++;
+    audio.volume = startVolume + (volumeDiff * (currentStep / steps));
+
+    if (currentStep >= steps) {
+      audio.volume = targetVolume;
+      clearInterval(fade);
+    }
+  }, stepTime);
 }
