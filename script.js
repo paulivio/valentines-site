@@ -13,8 +13,8 @@ let isHolding = false;
 // GAME VARIABLES
 let score = 0;
 let gameRunning = false;
-const targetScore = 5;
-
+const targetScore = 10;
+let gameHasBeenPlayed = false;
 document.addEventListener("DOMContentLoaded", function () {
 
   const startButton = document.getElementById("startButton");
@@ -22,6 +22,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //rest duck. This was to remove issue with page 3 needing 2 clicks after going to apge 4
 
+const skipButton = document.getElementById("skipGame");
+
+skipButton.addEventListener("click", function () {
+  gameRunning = false;
+    gameHasBeenPlayed = true;   // 👈 mark as played
+  setTimeout(() => {
+    goToPage(3);
+  }, 300);
+});
 
  
 // LONG PRESS SECRET LOGIC
@@ -171,10 +180,19 @@ function switchPage(pageNumber) {
 
 function startGame() {
 
+  const skipButton = document.getElementById("skipGame");
+
+if (skipButton) {
+  if (gameHasBeenPlayed) {
+    skipButton.style.display = "block";
+  } else {
+    skipButton.style.display = "none";
+  }
+}
   score = 0;
   document.getElementById("score").textContent = score;
   gameRunning = true;
-
+  document.getElementById("progressBar").style.width = "0%";
   const gameArea = document.getElementById("gameArea");
   const catcher = document.getElementById("catcher");
 
@@ -192,48 +210,63 @@ function startGame() {
     catcher.style.left = catcherX - 60 + "px";
   });
 
-  function spawnDuck() {
+ function spawnDuck() {
 
-    if (!gameRunning) return;
+  if (!gameRunning) return;
 
-    const duck = document.createElement("img");
-    duck.src = "assets/duck.png";
-    duck.classList.add("duck-falling");
+  const duck = document.createElement("img");
+  duck.src = "assets/duck.png";
+  duck.classList.add("duck-falling");
 
-    duck.style.left = Math.random() * (window.innerWidth - 60) + "px";
-    duck.style.top = "0px";
+  duck.style.left = Math.random() * (window.innerWidth - 60) + "px";
+  duck.style.top = "0px";
 
-    gameArea.appendChild(duck);
+  gameArea.appendChild(duck);
 
-    let fallInterval = setInterval(() => {
+  let fallInterval = setInterval(() => {
 
-      let top = parseFloat(duck.style.top);
-      duck.style.top = top + 5 + "px";
+    let top = parseFloat(duck.style.top);
+    const speed = 5 + score * 0.5;
+    duck.style.top = top + speed + "px";
 
-      const duckRect = duck.getBoundingClientRect();
-      const catcherRect = catcher.getBoundingClientRect();
+    const duckRect = duck.getBoundingClientRect();
+    const catcherRect = catcher.getBoundingClientRect();
 
-      if (
-        duckRect.bottom >= catcherRect.top &&
-        duckRect.left < catcherRect.right &&
-        duckRect.right > catcherRect.left
-      ) {
-        score++;
-        document.getElementById("score").textContent = score;
-        duck.remove();
-        clearInterval(fallInterval);
-        checkWin();
+    // 🎯 CATCH
+    if (
+      duckRect.bottom >= catcherRect.top &&
+      duckRect.left < catcherRect.right &&
+      duckRect.right > catcherRect.left
+    ) {
+      clearInterval(fallInterval);
+      duck.remove();
+
+      score++;
+      document.getElementById("score").textContent = score;
+
+      const catchSound = document.getElementById("clickSound");
+      if (catchSound) {
+        catchSound.currentTime = 0;
+        catchSound.play().catch(() => {});
       }
 
-      if (duckRect.top > window.innerHeight) {
-        score = Math.max(0, score - 1);
-        document.getElementById("score").textContent = score;
-        duck.remove();
-        clearInterval(fallInterval);
-      }
+      showFloatingPoint(duckRect.left, duckRect.top);
+      updateProgressBar();
+      checkWin();
+    }
 
-    }, 20);
-  }
+    // ❌ MISS
+    if (duckRect.top > window.innerHeight) {
+      clearInterval(fallInterval);
+      duck.remove();
+
+      score = Math.max(0, score - 1);
+      document.getElementById("score").textContent = score;
+      updateProgressBar();
+    }
+
+  }, 20);
+}
 
   const spawnLoop = setInterval(() => {
     if (!gameRunning) {
@@ -243,17 +276,41 @@ function startGame() {
     spawnDuck();
   }, 1200);
 
-  function checkWin() {
-    if (score >= targetScore) {
-      gameRunning = false;
-      setTimeout(() => {
-        goToPage(3);
-      }, 800);
-    }
+function checkWin() {
+  if (score >= targetScore) {
+    gameRunning = false;
+    gameHasBeenPlayed = true;   // 👈 mark complete
+
+    setTimeout(() => {
+      goToPage(3);
+    }, 800);
   }
 }
+}
 
+function showFloatingPoint(x, y) {
 
+  const point = document.createElement("div");
+  point.className = "floating-point";
+  point.textContent = "+1";
+
+  point.style.left = x + "px";
+  point.style.top = y + "px";
+
+  document.body.appendChild(point);
+
+  setTimeout(() => {
+    point.remove();
+  }, 800);
+}
+
+function updateProgressBar() {
+  const bar = document.getElementById("progressBar");
+  if (!bar) return;
+
+  const progress = (score / targetScore) * 100;
+  bar.style.width = progress + "%";
+}
 /* -------------------------
    FIREWORKS (ONLY PAGE 3)
 ------------------------- */
