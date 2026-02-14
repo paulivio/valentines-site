@@ -6,6 +6,8 @@
   <title>For You ❤️</title>
   <link rel="stylesheet" href="style.css">
 </head>
+<div id="fadeOverlay"></div>
+
 <body>
 
   <!-- Background Music -->
@@ -64,21 +66,35 @@
  <img src="assets/duck.png" class="duck-button" onclick="goToPage(4)">
   </section>
 
-  <!-- PAGE 4 -->
-  <section id="page4" class="page">
+<!-- PAGE 4 - TEXT RPG -->
+<section id="page4" class="page rpg-page">
+
+  <div class="rpg-container">
+    <div id="rpgText" class="rpg-text"></div>
+
+     <button id="rpgSkip" class="rpg-skip">Skip ⏭</button>
+
+    <div id="rpgChoices" class="rpg-choices"></div>
+  </div>
+
+</section>
+
+
+  <!-- PAGE 5 -->
+  <section id="page5" class="page">
     <canvas id="fireworks"></canvas>
     <img src="assets/image3.jpg" class="final-image">
     <h1 class="messagefinal">Happy Valentine’s Day ❤️</h1>
 <img src="assets/duck.png" class="duck-button final-duck" id="finalDuck">
 
-    <div class="secret-trigger" onclick="goToPage(5)"></div>
+    <div class="secret-trigger" onclick="goToPage(6)"></div>
   </section>
 
-<!-- PAGE 5 (SECRET PAGE) -->
+<!-- PAGE 6 (SECRET PAGE) -->
 <section id="page5" class="page secret-page">
   <img src="assets/image4.jpg" class="final-image">
   <h1 class="message">You found the secret 🦆❤️</h1>
-  <img src="assets/duck.png" class="duck-button" onclick="goToPage(4)">
+  <img src="assets/duck.png" class="duck-button" onclick="goToPage(5)">
 </section>
 
   <script src="script.js"></script>

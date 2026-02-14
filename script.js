@@ -61,7 +61,7 @@ if (finalDuck) {
         finalDuck.classList.add("unlocked");
 
         setTimeout(() => {
-          goToPage(5);
+          goToPage(6);
         }, 200);
       }
     }, 1000);
@@ -181,7 +181,11 @@ function switchPage(pageNumber) {
     startGame();
   }
 
-  if (pageNumber === 4) {
+if (pageNumber === 4) {
+  startRPG();
+}
+
+  if (pageNumber === 5) {
     console.log("Triggering fireworks");
     startFireworks();
   }
@@ -380,6 +384,311 @@ function updateProgressBar() {
 /* -------------------------
    FIREWORKS (ONLY PAGE 3)
 ------------------------- */
+let rpgVisitedStages = {};
+
+let rpgState = {
+  stage: 0,
+  triedDuck: false,
+  triedMagic: false,
+  triedPanic: false
+};
+
+function startRPG() {
+const skipBtn = document.getElementById("rpgSkip");
+
+if (rpgVisitedStages[0]) {
+  skipBtn.style.display = "block";
+} else {
+  skipBtn.style.display = "none";
+}
+  rpgState = {
+    stage: 0,
+    triedDuck: false,
+    triedMagic: false,
+    triedPanic: false
+    
+  };
+
+  rpgVisitedStages = {};   // 🔥 reset stage memory
+
+  showRPGStage();
+}
+
+function showRPGStage() {
+
+  const text = document.getElementById("rpgText");
+  const choices = document.getElementById("rpgChoices");
+
+  choices.innerHTML = "";   // 🔥 ALWAYS clear old options first
+
+  switch (rpgState.stage) {
+
+    case 0:
+      showStageText(
+        0,
+        text,
+        "Paul awakes with a start. The hangover from last night's stag do hits him hard. He slumps over and checks his phone. It's late. He almost forgot, he needs to be in Dundee for the gig tonight! What should he bring with him?",
+        () => {
+
+          createChoice("Plastic Ducks 🦆", () => {
+            rpgState.stage = 1;
+            showRPGStage();
+          }, 0);
+
+          createChoice("His Laptop", wrongItem, 300);
+          createChoice("A Tesco Meal Deal", wrongItem, 600);
+          createChoice("A Single Sock", wrongItem, 900);
+        }
+      );
+      break;
+
+    case 1:
+      showStageText(
+        1,
+        text,
+        "Now that he has the essentials, he makes his way outside and thinks to himself, how the hell am I going to get there?",
+        () => {
+
+          createChoice("Drive 🚗", () => {
+            typeWriter(
+              text,
+              "Drive? Do you think that's wise with 13 minors and a hangover? Let's maybe rethink that.",
+              25,
+              () => {
+                setTimeout(showRPGStage, 1500);
+              }
+            );
+          }, 0);
+
+          createChoice("Take the Train 🚆", () => {
+            rpgState.stage = 2;
+            showRPGStage();
+          }, 300);
+
+        }
+      );
+      break;
+
+    case 2:
+      showStageText(
+        2,
+        text,
+        "Arriving in Dundee, Paul tries to contact his friends but to no success. Godamnit, where is this gig again?",
+        () => {
+
+          createChoice("Church ⛪", () => {
+            typeWriter(
+              text,
+              "This looks like the place.",
+              25,
+              () => {
+                rpgState.stage = 3;
+                setTimeout(showRPGStage, 1000);
+              }
+            );
+          }, 0);
+
+          createChoice("Music Hall 🎵", () => {
+            typeWriter(
+              text,
+              "Paul confidently walks into the Music Hall... It's empty. Very empty. Perhaps not.",
+              25,
+              () => {
+                setTimeout(showRPGStage, 1500);
+              }
+            );
+          }, 400);
+
+        }
+      );
+      break;
+
+    case 3:
+      showStageText(
+        3,
+        text,
+        "The gig is class. Everyone is having a great time, but what is that catching Paul's eye? A beautiful woman. Should he go talk to her... why not...",
+        () => {
+          showFinalChoices();
+        }
+      );
+      break;
+
+ case 4:
+
+  typeWriter(
+    text,
+    "She sighs... \"Ok then... why not... Do you want my number?\"",
+    25,
+    () => {
+
+      setTimeout(() => {
+
+        typeWriter(
+          text,
+          "The rest is history.",
+          25,
+          () => {
+
+            setTimeout(() => {
+
+              const overlay = document.getElementById("fadeOverlay");
+              overlay.classList.add("active");   // fade to black
+
+              setTimeout(() => {
+                goToPage(5, false);              // move to fireworks
+                overlay.classList.remove("active");  // fade back in
+              }, 1200);
+
+            }, 1500);
+
+          }
+        );
+
+      }, 1500);
+
+    }
+  );
+
+  break;
+  }
+}
+function wrongItem() {
+  const text = document.getElementById("rpgText");
+  text.textContent = "That won't help Paul on this adventure. Try again.";
+  setTimeout(showRPGStage, 1500);
+}
+
+function showTrainChoice() {
+  rpgState.stage = 2;
+  showRPGStage();
+}
+
+function showFinalChoices() {
+
+  const text = document.getElementById("rpgText");
+  const choices = document.getElementById("rpgChoices");
+  choices.innerHTML = "";
+
+  if (!rpgState.triedDuck) {
+    createChoice("Offer her a Tiny Duck 🦆", () => {
+      rpgState.triedDuck = true;
+      typeWriter(
+        text,
+        "\"Why would I want your duck?\" she says, confused.",
+        25,
+        checkFinalAttempts
+      );
+    }, 0);
+  }
+
+  if (!rpgState.triedMagic) {
+    createChoice("Try a Magic Trick 🃏", () => {
+      rpgState.triedMagic = true;
+      typeWriter(
+        text,
+        "Paul pulls out a card. \"Is this your card?\" \nShe looks unimpressed. \"No.\" Try again.",
+        25,
+        checkFinalAttempts
+      );
+    }, 400);
+  }
+
+  if (!rpgState.triedPanic) {
+    createChoice("Panic 😰", () => {
+      rpgState.triedPanic = true;
+      typeWriter(
+        text,
+        "Paul panics. The girl feels sorry for him and gives him another shot.",
+        25,
+        checkFinalAttempts
+      );
+    }, 800);
+  }
+}
+
+function checkFinalAttempts() {
+
+  if (rpgState.triedDuck && rpgState.triedMagic && rpgState.triedPanic) {
+    setTimeout(() => {
+      rpgState.stage = 4;
+      showRPGStage();
+    }, 2000);
+  } else {
+    setTimeout(showFinalChoices, 2000);
+  }
+}
+
+function createChoice(label, action, delay = 0) {
+
+  const button = document.createElement("button");
+  button.textContent = label;
+  button.style.opacity = "0";
+  button.onclick = action;
+
+  document.getElementById("rpgChoices").appendChild(button);
+
+  setTimeout(() => {
+    button.style.transition = "opacity 0.5s ease";
+    button.style.opacity = "1";
+  }, delay);
+}
+
+
+function typeWriter(element, text, speed = 25, callback) {
+
+  const choices = document.getElementById("rpgChoices");
+  if (choices) {
+    choices.innerHTML = "";   // 🔥 clear buttons immediately
+  }
+
+  element.textContent = "";
+  let i = 0;
+
+  function typing() {
+    if (i < text.length) {
+      element.textContent += text.charAt(i);
+      i++;
+      setTimeout(typing, speed);
+    } else {
+      if (callback) callback();
+    }
+  }
+
+  typing();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const skipBtn = document.getElementById("rpgSkip");
+
+  if (skipBtn) {
+    skipBtn.addEventListener("click", () => {
+
+      const overlay = document.getElementById("fadeOverlay");
+
+      overlay.classList.add("active");
+
+      setTimeout(() => {
+        goToPage(5, false);   // fireworks page
+        overlay.classList.remove("active");
+      }, 1000);
+
+    });
+  }
+
+});
+
+function showStageText(stageNumber, element, text, callback) {
+
+  if (!rpgVisitedStages[stageNumber]) {
+    rpgVisitedStages[stageNumber] = true;
+    typeWriter(element, text, 25, callback);
+  } else {
+    element.textContent = text;
+    if (callback) callback();
+  }
+}
 
 function startFireworks() {
 

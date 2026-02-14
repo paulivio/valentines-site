@@ -127,7 +127,7 @@ body {
   text-align: center;
 }
 
-dfdfd
+
 .page.active.intro-page {
   display: flex;
   justify-content: center;
@@ -341,4 +341,78 @@ html, body {
   padding: 0;
   overflow: hidden;
   touch-action: none;           /* 🔥 stops swipe dragging */
+}
+
+
+.rpg-page {
+  background: black;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rpg-container {
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.rpg-text {
+  font-size: 1.3rem;
+  margin-bottom: 30px;
+  min-height: 100px;
+}
+
+.rpg-choices button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: hotpink;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.rpg-choices button:hover {
+  transform: scale(1.05);
+}
+
+#fadeOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+ transition: opacity 1.5s ease;
+  z-index: 9999;
+}
+
+#fadeOverlay.active {
+  opacity: 1;
+}
+
+.rpg-skip {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid hotpink;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.rpg-skip:hover {
+  background: hotpink;
 }
