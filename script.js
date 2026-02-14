@@ -14,7 +14,7 @@ let isHolding = false;
 let score = 0;
 let gameRunning = false;
 const targetScore = 10;
-let gameHasBeenPlayed = false;
+let gameHasBeenPlayed = true;
 
 let spawnLoop = null;
 let activeDuckIntervals = [];
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const startButton = document.getElementById("startButton");
   const bgMusic = document.getElementById("bgMusic");
 
-  //rest duck. This was to remove issue with page 3 needing 2 clicks after going to apge 4
+  //rest duck. This was to remove issue with page 3 needing 2 clicks after going to page 4
 
 const skipButton = document.getElementById("skipGame");
 
@@ -393,27 +393,28 @@ let rpgState = {
   triedPanic: false
 };
 
-function startRPG() {
-const skipBtn = document.getElementById("rpgSkip");
+//to temp add skip
+let rpgSkipEnabled = true;
 
-if (rpgVisitedStages[0]) {
-  skipBtn.style.display = "block";
-} else {
-  skipBtn.style.display = "none";
-}
+function startRPG() {
+
+  const skipBtn = document.getElementById("rpgSkip");
+
+  if (skipBtn) {
+    skipBtn.style.display = rpgSkipEnabled ? "block" : "none";
+  }
+
   rpgState = {
     stage: 0,
     triedDuck: false,
     triedMagic: false,
     triedPanic: false
-    
   };
 
-  rpgVisitedStages = {};   // 🔥 reset stage memory
+  rpgVisitedStages = {};
 
   showRPGStage();
 }
-
 function showRPGStage() {
 
   const text = document.getElementById("rpgText");
